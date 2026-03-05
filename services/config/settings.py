@@ -9,5 +9,5 @@ DATABASE_URL = (
     f"postgresql+psycopg://"
     f"{POSTGRES_USER}:{POSTGRES_PASSWORD}"
     f"@{POSTGRES_HOST}:5432/"
-    f"{os.environ['POSTGRES_DB']}"
+    f"{POSTGRES_DB}"
 )
