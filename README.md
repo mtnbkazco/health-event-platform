@@ -7,6 +7,7 @@ layers using Kafka and microservices.
 The platform demonstrates how heterogeneous healthcare events from an 
 Electronic Health Record (EHR) system can be processed through a staged 
 pipeline that ensures data quality, semantic consistency, and traceability.
+
 ---
 ### Architecture:
 The system is composed of multiple services that communicate through Kafka topics. 
