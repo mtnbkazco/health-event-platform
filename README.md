@@ -82,20 +82,21 @@ health-event-platform
 │   ├── config
 │   │
 │   ├── fake-ehr-producer
-│   │   └── app
-│   │   └── test
+│   │   └── fake_ehr_producer
+│   │   └── tests
 │   │
 │   ├── validation-service
-│   │   └── app
-│   │   └── test
+│   │   └── validation_service
+│   │         └── schema
+│   │   └── tests
 │   │
 │   ├── normalization-service
-│   │   └── app
-│   │   └── test
+│   │   └── normalization_service
+│   │   └── tests
 │   │
 │   ├── persistence-service
-│   │   └── app
-│   │   └── test
+│   │   └── persistence_service
+│   │   └── tests
 │   │
 │   └── kafka-utils
 │
