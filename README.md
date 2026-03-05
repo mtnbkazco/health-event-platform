@@ -54,23 +54,23 @@ next stage of the pipeline.
 Services communicate asynchronously through Kafka topics, allowing independent scaling 
 and loose coupling between stages.
 
-#### Data Validation:
+#### <u>Data Validation:</u>
 Incoming events are validated to ensure required structure and fields are present 
 before downstream processing.
 
-#### Semantic Normalization:
+#### <u>Semantic Normalization:</u>
 Healthcare systems often represent the same clinical concept in different ways. 
 The normalization stage converts these into canonical representations.
 
-#### Dead Letter Queue (DLQ):
+#### <u>Dead Letter Queue (DLQ):</u>
 Events that cannot be processed are redirected to a DLQ topic to prevent pipeline 
 blockage and allow later inspection.
 
-#### Traceability:
+#### <u>Traceability:</u>
 Events include a trace_id that propagates through the pipeline to enable 
 debugging and event lineage tracking across services.
 
-#### Shared Kafka Utilities:
+#### <u>Shared Kafka Utilities:</u>
 Logic to check for topics creation and create if topic does not exist.
 
 ---
