@@ -7,7 +7,7 @@ POSTGRES_DB = os.getenv("POSTGRES_DB", "health_events")
 
 DATABASE_URL = (
     f"postgresql+psycopg://"
-    f"{os.environ['POSTGRES_USER']}:{os.environ['POSTGRES_PASSWORD']}"
+    f"{POSTGRES_USER}:{POSTGRES_PASSWORD}"
     f"@{POSTGRES_HOST}:5432/"
     f"{os.environ['POSTGRES_DB']}"
 )
