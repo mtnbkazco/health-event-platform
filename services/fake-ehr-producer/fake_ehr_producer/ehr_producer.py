@@ -4,9 +4,9 @@ import uuid
 from functools import partial
 
 from confluent_kafka import Producer
-from app.resource_generator import ResourceGenerator
+from fake_ehr_producer.resource_generator import ResourceGenerator
 from services.config.logger_config import get_logger, trace_id
-
+from services.config import env_loader
 
 class FakeEHRProducer:
     def __init__(self, conf, topic):

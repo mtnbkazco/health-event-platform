@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import sessionmaker
-from app.models.fhir_resource_model import FhirResource
+from persistence_service.models.fhir_resource_model import FhirResource
 from services.config.logger_config import get_logger
 
 

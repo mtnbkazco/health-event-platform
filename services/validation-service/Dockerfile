@@ -9,11 +9,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # copy of config for tracer and logger
 COPY services/config ./services/config
-# copy the app folder and everything else to /src
-COPY services/validation-service/app/ ./app/
+# copy the validation and schema folders and everything else to /src
+COPY services/validation-service/validation_service/ ./validation_service/
 
 # set path
 ENV PYTHONPATH=/src
 
 # run the service
-CMD ["python", "-m", "app.raw_events_consumer"]
+CMD ["python", "-m", "validation_service.raw_events_consumer"]

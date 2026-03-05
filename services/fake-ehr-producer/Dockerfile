@@ -10,8 +10,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # copy of config for tracer and logger
 COPY services/config ./services/config
 
-# copy the app folder and everything else to /src
-COPY services/fake-ehr-producer/app/ ./app/
+# copy the fake_ehr_producer folder and everything else to /src
+COPY services/fake-ehr-producer/fake_ehr_producer/ ./fake_ehr_producer/
 
 # run the service
-CMD ["python", "-m", "app.fake_ehr_producer"]
+CMD ["python", "-m", "fake_ehr_producer.ehr_producer"]

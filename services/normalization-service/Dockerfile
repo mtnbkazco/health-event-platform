@@ -11,11 +11,11 @@ RUN mkdir -p services/config
 # copy of config for tracer and logger
 COPY services/config ./services/config
 
-# copy the app folder and everything else to /src
-COPY services/normalization-service/app/ ./app/
+# copy the normalization_service folder and everything else to /src
+COPY services/normalization-service/normalization_service/ ./normalization_service/
 
 # set path
 ENV PYTHONPATH=/src
 
 # run the service
-CMD ["python", "-m", "app.normalize_events_consumer"]
+CMD ["python", "-m", "normalization_service.normalize_events_consumer"]

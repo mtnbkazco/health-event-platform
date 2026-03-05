@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from app.mapper import FhirResourceMap
+from normalization_service.mapper import FhirResourceMap
 
 def normalize_event(event):
     raw_type = event["eventType"]

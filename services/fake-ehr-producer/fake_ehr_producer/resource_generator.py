@@ -2,9 +2,9 @@ import json
 import random
 import time
 import uuid
-from app.resources.encounter import create_encounter
-from app.resources.condition import create_condition
-from app.resources.observation import create_observation
+from fake_ehr_producer.resources.encounter import create_encounter
+from fake_ehr_producer.resources.condition import create_condition
+from fake_ehr_producer.resources.observation import create_observation
 
 
 class BaseGenerator:

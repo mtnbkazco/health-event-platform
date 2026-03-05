@@ -3,9 +3,11 @@ import os
 
 from confluent_kafka import Consumer
 
-from app.database import Database
-from app.dlq_producer import send_to_dlq
+from persistence_service.database import Database
+from persistence_service.dlq_producer import send_to_dlq
 from services.config.logger_config import get_logger, trace_id
+from services.config import env_loader
+from services.config.settings import DATABASE_URL
 
 
 class PersistenceService:
@@ -19,7 +21,7 @@ class PersistenceService:
         self.logger.info("PersistenceService service started, waiting for messages...")
         try:
             while True:
-                message =self.consumer.poll(2.0)
+                message = self.consumer.poll(2.0)
 
                 if message is None:
                     continue
@@ -78,7 +80,7 @@ if __name__ == "__main__":
         'auto.offset.reset': 'earliest',
         'max.poll.interval.ms': 300000
     }
-    db_url = os.getenv("DATABASE_URL")
+    db_url = DATABASE_URL
 
     consumer_subscribe = ["canonical-clinical-events"]
     svc = PersistenceService(consumer_conf, consumer_subscribe, db_url)
