@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: fhir-resources-table-create
+      author: name-here
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            - tableExists:
+                tableName: fhir_resources
+      changes:
+        - createTable:
+            tableName: fhir_resources
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: trace_id
+                  type: VARCHAR(100)
+              - column:
+                  name: source
+                  type: VARCHAR(100)
+              - column:
+                  name: tenant_id
+                  type: VARCHAR(100)
+              - column:
+                  name: event_type
+                  type: VARCHAR(100)
+              - column:
+                  name: original_event_type
+                  type: VARCHAR(100)
+              - column:
+                  name: resource_type
+                  type: VARCHAR(100)
+              - column:
+                  name: fhir_id
+                  type: VARCHAR(100)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: data
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP

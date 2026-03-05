@@ -1,0 +1,123 @@
+version: '3.8'
+
+services:
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      # KRaft mode configuration
+      KAFKA_CLUSTER_ID: ${KAFKA_CLUSTER_ID} # A unique, base64-encoded UUID
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_LISTENERS: "INTERNAL://:29092,PLAINTEXT://:9092,CONTROLLER://:9093"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,PLAINTEXT://localhost:9092"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL" # ui stuff - INTERNAL IS FOR KAFKA-UI ^
+      # Logging and storage
+      KAFKA_LOG_DIRS: "/tmp/kraft-combined-logs"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - ./data/kafka:/tmp/kraft-combined-logs
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "Local Kafka Cluster"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:29092"
+      DYNAMIC_CONFIG_ENABLED: "true"
+    depends_on:
+      - kafka
+
+  # infrastructure: postgres for fhir data
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # topic migrator - This service runs, creates topics, and exits
+  topic-migrator:
+    build:
+      context: .
+      dockerfile: ./services/kafka-utils/Dockerfile
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS_FOR_SERVICES}
+    depends_on:
+      - kafka
+
+  # database migrator
+  liquibase:
+    build:
+      context: .
+      dockerfile: ./services/liquibase/Dockerfile
+    volumes:
+      # path inside the container
+      - ./services/liquibase/db-changelog:/liquibase/changelog
+    environment:
+      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      - LIQUIBASE_COMMAND_USERNAME=${LIQUIBASE_USER}
+      - LIQUIBASE_COMMAND_PASSWORD=${LIQUIBASE_PASSWORD}
+      - LIQUIBASE_COMMAND_CHANGELOG_FILE=changelog-master.yaml
+    command: update
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # services
+  fake-ehr-producer:
+    build:
+      context: .
+      dockerfile: ./services/fake-ehr-producer/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS_FOR_SERVICES}
+
+  validation-service:
+    build:
+      context: .
+      dockerfile: ./services/validation-service/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS_FOR_SERVICES}
+
+  normalization-service:
+    build:
+      context: .
+      dockerfile: ./services/normalization-service/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS_FOR_SERVICES}
+
+  persistence-service:
+    build:
+      context: .
+      dockerfile: ./services/persistence-service/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: ${KAFKA_BOOTSTRAP_SERVERS_FOR_SERVICES}
+      DATABASE_URL: ${DATABASE_URL}

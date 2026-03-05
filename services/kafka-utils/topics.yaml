@@ -1,0 +1,28 @@
+topics:
+  - name: "raw-clinical-events"
+    partitions: 6
+    replication_factor: 1
+    config:
+      cleanup.policy: "delete"
+      retention.ms: "604800000" # 7 days in milliseconds
+
+  - name: "raw-clinical-events-dql"
+    partitions: 6
+    replication_factor: 1
+    config:
+      cleanup.policy: "delete"
+      retention.ms: "604800000" # 7 days in milliseconds
+
+  - name: "normalize-clinical-events"
+    partitions: 6
+    replication_factor: 1
+    config:
+      cleanup.policy: "delete"
+      retention.ms: "604800000" # 7 days in milliseconds
+
+  - name: "canonical-clinical-events"
+    partitions: 6
+    replication_factor: 1
+    config:
+      cleanup.policy: "delete"
+      retention.ms: "604800000" # 7 days in milliseconds
